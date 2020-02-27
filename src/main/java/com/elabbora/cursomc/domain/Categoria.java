@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Categoria implements Serializable{
 	
@@ -20,6 +22,9 @@ public class Categoria implements Serializable{
 	private Integer id;
 	private String nome;
 	
+	//Usado para tratar a referência ciclica. Faz isso do lado que quer que venha os objetos associados, ou
+	//seja, eu quero mostrar os produtos quando pesquisar as categorias.	
+	@JsonManagedReference   
 	@ManyToMany(mappedBy="categorias")
 	private List<Produto> produtos = new ArrayList<>();
 	
