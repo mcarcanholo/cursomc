@@ -1,5 +1,6 @@
 package com.elabbora.cursomc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import com.elabbora.cursomc.domain.Cidade;
 import com.elabbora.cursomc.domain.Cliente;
 import com.elabbora.cursomc.domain.Endereco;
 import com.elabbora.cursomc.domain.Estado;
+import com.elabbora.cursomc.domain.Pagamento;
+import com.elabbora.cursomc.domain.PagamentoComBoleto;
+import com.elabbora.cursomc.domain.PagamentoComCartao;
+import com.elabbora.cursomc.domain.Pedido;
 import com.elabbora.cursomc.domain.Produto;
+import com.elabbora.cursomc.domain.enums.EstadoPagamento;
 import com.elabbora.cursomc.domain.enums.TipoCliente;
 import com.elabbora.cursomc.repositories.CategoriaRepository;
 import com.elabbora.cursomc.repositories.CidadeRepository;
 import com.elabbora.cursomc.repositories.ClienteRepository;
 import com.elabbora.cursomc.repositories.EnderecoRepository;
 import com.elabbora.cursomc.repositories.EstadoRepository;
+import com.elabbora.cursomc.repositories.PagamentoRepository;
+import com.elabbora.cursomc.repositories.PedidoRepository;
 import com.elabbora.cursomc.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -41,6 +49,12 @@ public class CursomcApplication implements CommandLineRunner {
 	
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursomcApplication.class, args);
@@ -92,7 +106,23 @@ public class CursomcApplication implements CommandLineRunner {
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 		
-	}
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1 );
+		Pedido ped2 = new Pedido(null, sdf.parse("10/09/2017 10:32"), cli1, e2 );
+		
+		//Sempre deve ser instanciada 1 das subClasses
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		
+		//Sempre deve ser instanciada 1 das subClasses
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENT, ped2, sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
+}
 	 
 	
 
