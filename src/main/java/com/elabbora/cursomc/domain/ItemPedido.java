@@ -5,11 +5,14 @@ import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //Classe de associação não tem idProprio, vai receber o ID do produto e pedido
 @Entity
 public class ItemPedido implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
+	@JsonIgnore //Como tem uma chave composta, ele deve ser ignorado, não serializado
 	@EmbeddedId  //Por ser um tipo embutido em uma classe auxiliar
 	private ItemPedidoPK id = new ItemPedidoPK();
 	private Double desconto;
@@ -31,9 +34,11 @@ public class ItemPedido implements Serializable{
 	}
 
 	//para acessar os dados do pedido e produto dentro da propria classe
+	@JsonIgnore //Se não colocar vai dar erro de referência Ciclica. Tudo que começa com get ele serializa
 	public Pedido getPedido() {
 		return getPedido();
 	}
+	
 	
 	public Produto getProduto() {
 		return id.getProduto();
