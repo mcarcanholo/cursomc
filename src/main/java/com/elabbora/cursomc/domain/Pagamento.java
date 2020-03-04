@@ -11,7 +11,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import com.elabbora.cursomc.domain.enums.EstadoPagamento;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED) //As estratégias para gerar a tabela para os filhos. Ou tabelão e dependendo do que for usar, coloca nulo pro outro ou uma tabela para cada filho
@@ -24,7 +24,7 @@ public abstract class Pagamento implements Serializable{ //Colocado abstract par
 	private Integer id;
 	private Integer estado;
 	
-	@JsonBackReference
+	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name="pedido_id")
 	@MapsId  //Essa anotação que garante que o Id do pagamento seja o mesmo que o do pedido
