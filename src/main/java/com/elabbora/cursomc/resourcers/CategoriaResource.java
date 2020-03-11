@@ -1,6 +1,8 @@
 package com.elabbora.cursomc.resourcers;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.elabbora.cursomc.domain.Categoria;
+import com.elabbora.cursomc.dto.CategoriaDTO;
 import com.elabbora.cursomc.services.CategoriaService;
 
 @RestController
@@ -48,5 +51,12 @@ public class CategoriaResource {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {//Void porque quando eu apagar retorno resposta com corpo vazio
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() {		
+		List<Categoria> list = service.findAll();	
+		List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());  
+		return ResponseEntity.ok().body(listDto);
 	}
 }
