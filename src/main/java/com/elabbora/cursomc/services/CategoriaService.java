@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.elabbora.cursomc.domain.Categoria;
+import com.elabbora.cursomc.dto.CategoriaDTO;
 import com.elabbora.cursomc.repositories.CategoriaRepository;
 import com.elabbora.cursomc.services.exception.DataIntegrityException;
 import com.elabbora.cursomc.services.exception.ObjectNotFoundException;
@@ -57,6 +58,11 @@ public class CategoriaService {
 	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
+	}
+	
+	//Método aulixiar para instanciar uma Categoria a partir do DTO
+	public Categoria fromDTO(CategoriaDTO objDto) {
+		return new Categoria(objDto.getId(), objDto.getNome());
 	}
 
 }
