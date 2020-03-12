@@ -3,6 +3,8 @@ package com.elabbora.cursomc.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -10,10 +12,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.elabbora.cursomc.domain.Cidade;
 import com.elabbora.cursomc.domain.Cliente;
-import com.elabbora.cursomc.domain.Cliente;
+import com.elabbora.cursomc.domain.Endereco;
+import com.elabbora.cursomc.domain.enums.TipoCliente;
 import com.elabbora.cursomc.dto.ClienteDTO;
+import com.elabbora.cursomc.dto.ClienteNewDTO;
 import com.elabbora.cursomc.repositories.ClienteRepository;
+import com.elabbora.cursomc.repositories.EnderecoRepository;
 import com.elabbora.cursomc.services.exception.DataIntegrityException;
 import com.elabbora.cursomc.services.exception.ObjectNotFoundException;
 
@@ -22,6 +28,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repo;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public Cliente find(Integer id) {
 		Optional<Cliente> obj = repo.findById(id);
@@ -29,6 +38,14 @@ public class ClienteService {
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
 	}
 
+	@Transactional
+	public Cliente insert(Cliente obj) {
+		obj.setId(null);		
+		obj = repo.save(obj);
+		enderecoRepository.saveAll(obj.getEnderecos()); //Necessidade de gravar os endereços
+		return obj;
+	}
+	
 	//Necessário implementar desta forma para que o update mantenha os campos que não foram alterados,
 	//caso contrário fica null
 	public Cliente update(Cliente obj) {
@@ -66,5 +83,35 @@ public class ClienteService {
 	public Cliente fromDTO(ClienteDTO objDto) {
 		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null);
 	}
+	
+	public Cliente fromDTO(ClienteNewDTO objDto) {
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()));
+		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
+		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(objDto.getTelefone1());
+		if (objDto.getTelefone2()!=null) {
+			cli.getTelefones().add(objDto.getTelefone2());
+		}
+		if (objDto.getTelefone3()!=null) {
+			cli.getTelefones().add(objDto.getTelefone3());
+		}
+		return cli;
+	}
+	
+	/*Teste de Inclusão do Cliente PostMan
+	}
+	    "nome": "Roberta Close",
+	    "email": "roberta@yahoo",
+	    "cpfOuCnpj": "2132132323",
+	    "tipo": 1,
+	    "telefone1" : "19 9234343",
+	    "telefone1" : "19 2231332",
+	    "logradouro": "Rua Flores",
+	    "numero": "300",
+	    "complemento": "Apto 303",
+	    "cep": "123321",
+	    "cidadeId": 1
+	} */
 	
 }

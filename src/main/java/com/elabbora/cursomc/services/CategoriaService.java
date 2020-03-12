@@ -14,6 +14,7 @@ import com.elabbora.cursomc.domain.Categoria;
 import com.elabbora.cursomc.domain.Cliente;
 import com.elabbora.cursomc.dto.CategoriaDTO;
 import com.elabbora.cursomc.repositories.CategoriaRepository;
+import com.elabbora.cursomc.repositories.EnderecoRepository;
 import com.elabbora.cursomc.services.exception.DataIntegrityException;
 import com.elabbora.cursomc.services.exception.ObjectNotFoundException;
 
@@ -22,7 +23,8 @@ public class CategoriaService {
 
 	@Autowired
 	private CategoriaRepository repo;
-
+	
+	
 	public Categoria find(Integer id) {
 		Optional<Categoria> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
@@ -33,7 +35,7 @@ public class CategoriaService {
 	
 	public Categoria insert(Categoria obj) {
 		obj.setId(null);
-		return repo.save(obj);
+		return repo.save(obj);		
 	}
 	
 	public Categoria update(Categoria obj) {
