@@ -32,6 +32,11 @@ public class ItemPedido implements Serializable{
 		this.quantidade = quantidade;
 		this.preco = preco;
 	}
+	
+	//O fato de colocar o get no nome, o spring vai serializar e coloca-lo no JSON.
+	public double getSubTotal() {
+		return (preco - desconto) * quantidade;
+	}
 
 	//para acessar os dados do pedido e produto dentro da propria classe
 	@JsonIgnore //Se não colocar vai dar erro de referência Ciclica. Tudo que começa com get ele serializa
