@@ -24,7 +24,7 @@ public abstract class Pagamento implements Serializable{ //Colocado abstract par
 	//Não vai ser colocado para gerar o ID com sequence, pois o ID do pagamento deverá ser o mesmo do pedido correspondente
 	@Id
 	private Integer id;
-	private Integer estado;
+	private Integer estado; 
 	
 	@JsonIgnore
 	@OneToOne

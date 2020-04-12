@@ -20,7 +20,7 @@ public class Estado implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	private String nome;
+	private String nome; 
 	
 	//No mappedBy, tem que colocar exatamento o nome do atributo do lado de lá que recebeu o objeto Estado
 	@JsonIgnore
